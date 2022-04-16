@@ -9,9 +9,9 @@ console = Console()
 finlist = []
 
 def main():
-    # Set up a way to handle keyboard interrupts
+    # Set up a way to let the user leave the program
     try:
-        # We don't need to print the table if its not
+        # We don't need to print the table if its empty
         if (len(finlist) != 0):
             console.print(get_table())
             options = [
@@ -30,6 +30,7 @@ def main():
 
         parse_choices(choice)
         main()
+
     except KeyboardInterrupt:
         console.print("\nGood bye", style="#ffff00")
 
@@ -37,13 +38,8 @@ def parse_choices(choice):
     if choice == 1:
         add_item()
 
-    # 2. Delete a ranking
     elif choice == 2:
-        console.print("Which item would you like to delete?")
-
-        item_number = ""
-        while (not(item_number.isnumeric()):
-                item_number = console.input("Enter [i]number[/]: ")
+        delete_item()
 
     # 3. Edit a ranking
     elif choice == 3:
@@ -60,6 +56,21 @@ def add_item() -> None:
     item_ranking = floor(float(item_ranking))
     finlist.insert(item_ranking, item_name)
 
+def delete_item() -> None:
+    item_number: str = request_int("Which item would you like to delete?")
+    finlist.pop(item_number-1)
+
+def request_int(message) -> int:
+    console.print(message)
+
+    item_number_input = ""
+    while (not(item_number_input.isnumeric())):
+        item_number_input = console.input("Enter [i]number[/]: ")
+        if (not(item_number_input.isnumeric())):
+            console.print("Please enter a", end=' ')
+            console.print("whole number", style="#ff0000 bold italic")
+    
+    return int(item_number_input)
 
 def get_table() -> Table:
     table = Table(title="Ranker", header_style="#ff8a65 bold")
