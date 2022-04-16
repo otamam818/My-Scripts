@@ -15,14 +15,14 @@ def main():
         if (len(finlist) != 0):
             console.print(get_table())
             options = [
-                "Add a new rating",
-                "Delete a rating",
-                "Edit a rating",
+                "Add a new item",
+                "Delete a item",
+                "Edit an item",
                 "Copy to clipboard",
                 "Export as .txt file"
             ]
         else:
-            options = ["Add a new rating"]
+            options = ["Add a new item"]
         choice = Prompt.ask_options(
             question = "What would you like to do?",
             options = options
@@ -34,25 +34,36 @@ def main():
         console.print("\nGood bye", style="#ffff00")
 
 def parse_choices(choice):
-    "1. Add a new rating"
     if choice == 1:
-        item_name   = console.input("Name of item: ")
-        item_rating = ""
-        # TODO: Parse for floats
-        while not(isfloat(item_rating)):
-            item_rating = console.input("Rating: ")
-        item_rating = floor(float(item_rating))
-        finlist.insert(item_rating, item_name)
-    # 2. Delete a rating
+        add_item()
+
+    # 2. Delete a ranking
     elif choice == 2:
-        pass
-    # 3. Edit a rating
+        console.print("Which item would you like to delete?")
+
+        item_number = ""
+        while (not(item_number.isnumeric()):
+                item_number = console.input("Enter [i]number[/]: ")
+
+    # 3. Edit a ranking
     elif choice == 3:
         pass
 
+def add_item() -> None:
+    item_name   = console.input("Name of item: ")
+    item_ranking = ""
+    while not(isfloat(item_ranking)):
+        item_ranking = console.input("Rank: ")
+        if not(isfloat(item_ranking)):
+            console.print("Please enter a", end=' ')
+            console.print("number", style="#ff0000 bold italic")
+    item_ranking = floor(float(item_ranking))
+    finlist.insert(item_ranking, item_name)
+
+
 def get_table() -> Table:
-    table = Table(title="Rater", header_style="#ff8a65 bold")
-    for i in ["Item", "Rating"]:
+    table = Table(title="Ranker", header_style="#ff8a65 bold")
+    for i in ["Item", "Ranking"]:
         table.add_column(i)
 
     count = 1
