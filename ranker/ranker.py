@@ -1,8 +1,10 @@
 from typing import List
 from rich.console import Console
 from rich.table import Table
+from rich.prompt import Confirm
 from __init__ import *
 from math import floor
+from pyperclip import copy
 
 console = Console()
 
@@ -17,9 +19,11 @@ def main():
             options = [
                 "Add a new item",
                 "Delete a item",
-                "Edit an item",
+                "Rename an item",
+                "Move Item",
                 "Copy to clipboard",
-                "Export as .txt file"
+                "Export as .txt file",
+                "Export as .csv file"
             ]
         else:
             options = ["Add a new item"]
@@ -28,6 +32,9 @@ def main():
             options = options
         )
 
+        # Prevent the impossible
+        assert(0 < choice <= len(options))
+
         parse_choices(choice)
         main()
 
@@ -35,14 +42,19 @@ def main():
         console.print("\nGood bye", style="#ffff00")
 
 def parse_choices(choice):
-    if choice == 1:
-        add_item()
+    {
+        1 : add_item,
+        2 : delete_item,
+        3 : rename_item,
+        4 : move_item,
+        5 : copy_rankings
+    }[choice]()
+    # 6. Export as .txt file
+    if choice == 6:
+        pass
 
-    elif choice == 2:
-        delete_item()
-
-    # 3. Edit a ranking
-    elif choice == 3:
+    # 7. Export as .txt file
+    elif choice == 7:
         pass
 
 def add_item() -> None:
@@ -57,8 +69,40 @@ def add_item() -> None:
     finlist.insert(item_ranking, item_name)
 
 def delete_item() -> None:
-    item_number: str = request_int("Which item would you like to delete?")
-    finlist.pop(item_number-1)
+    item_index: str = request_int("Which item would you like to delete?")
+    value = finlist[item_index]
+    if Confirm.ask(f"Deleting [white bold]{value}[/]. Continue?"):
+        finlist.pop(item_index)
+
+def rename_item() -> None:
+    item_index = request_int("Which item would you like to edit?")
+
+    console.print("Item chosen:", end=' ')
+    console.print(finlist[item_index], style="white bold")
+    new_name = console.input("Enter the new name of the value: ")
+
+    finlist[item_index] = new_name
+
+def move_item() -> None:
+    message: str = "Which item do you want to move?"
+    item_index: int = request_int(message)
+    message = "Choose the number you want to move it to"
+    moving_index: int = request_int(message)
+
+    initial_item = finlist.pop(item_index)
+    finlist.insert(moving_index, initial_item)
+
+def copy_rankings() -> None:
+    finstr = rankings_str()
+
+    copy(finstr)
+    console.print("[#66bb6a]Copied:[/]\n", finstr)
+
+def rankings_str() -> str:
+    finstr = ""
+    for index, element in enumerate(finlist):
+        finstr += f"{index+1}. {element}\n"
+    return finstr
 
 def request_int(message) -> int:
     console.print(message)
@@ -70,7 +114,7 @@ def request_int(message) -> int:
             console.print("Please enter a", end=' ')
             console.print("whole number", style="#ff0000 bold italic")
     
-    return int(item_number_input)
+    return int(item_number_input)-1
 
 def get_table() -> Table:
     table = Table(title="Ranker", header_style="#ff8a65 bold")
