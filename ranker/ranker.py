@@ -93,16 +93,22 @@ def move_item() -> None:
     finlist.insert(moving_index, initial_item)
 
 def copy_rankings() -> None:
-    finstr = rankings_str()
-
+    finstr = as_str()
     copy(finstr)
-    console.print("[#66bb6a]Copied:[/]\n", finstr)
+    console.print("[#00ff00]Copied:[/]", finstr)
 
-def rankings_str() -> str:
+def as_str() -> str:
     finstr = ""
     for index, element in enumerate(finlist):
         finstr += f"{index+1}. {element}\n"
     return finstr
+
+def export_txt() -> None:
+    finstr = as_str()
+    file_name = input("Name of file: ")
+    with open(file_name, 'w') as my_file:
+        my_file.write(finstr)
+    print("Exported to", file_name)
 
 def request_int(message) -> int:
     console.print(message)
