@@ -47,15 +47,10 @@ def parse_choices(choice):
         2 : delete_item,
         3 : rename_item,
         4 : move_item,
-        5 : copy_rankings
+        5 : copy_rankings,
+        6 : export_txt,
+        7 : export_csv
     }[choice]()
-    # 6. Export as .txt file
-    if choice == 6:
-        pass
-
-    # 7. Export as .txt file
-    elif choice == 7:
-        pass
 
 def add_item() -> None:
     item_name   = console.input("Name of item: ")
@@ -105,10 +100,24 @@ def as_str() -> str:
 
 def export_txt() -> None:
     finstr = as_str()
-    file_name = input("Name of file: ")
+    write_to_file("Name of file: ", ".txt", finstr)
+
+def write_to_file(prompt: str, extension: str, data: str):
+    console.print(prompt, style="#ffff00 bold", end='')
+    file_name = input() + extension
     with open(file_name, 'w') as my_file:
-        my_file.write(finstr)
-    print("Exported to", file_name)
+        my_file.write(data)
+    console.print(f"[#ffff00 bold]Exported to:[/] [white b]{file_name}[/]")
+
+def export_csv() -> None:
+    HEADER = "Item,Rank\n"
+
+    data = ""
+    for index, value in enumerate(finlist):
+        data += f"{value},{index+1}\n"
+
+    csv = HEADER + data
+    write_to_file("Name of file: ", ".csv", csv)
 
 def request_int(message) -> int:
     console.print(message)
