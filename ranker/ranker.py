@@ -11,6 +11,7 @@ console = Console()
 finlist = []
 
 def main():
+    """Implements a way to rank any arbitrary item"""
     # Set up a way to let the user leave the program
     try:
         # We don't need to print the table if its empty
@@ -53,7 +54,8 @@ def parse_choices(choice):
     }[choice]()
 
 def add_item() -> None:
-    item_name   = console.input("Name of item: ")
+    """Adds an item based on the user input"""
+    item_name    = console.input("Name of item: ")
     item_ranking = ""
     while not(isfloat(item_ranking)):
         item_ranking = console.input("Rank: ")
@@ -64,12 +66,14 @@ def add_item() -> None:
     finlist.insert(item_ranking, item_name)
 
 def delete_item() -> None:
+    """Deletes an item based on the user input"""
     item_index: str = request_int("Which item would you like to delete?")
     value = finlist[item_index]
     if Confirm.ask(f"Deleting [white bold]{value}[/]. Continue?"):
         finlist.pop(item_index)
 
 def rename_item() -> None:
+    """Renames an item based on the user input"""
     item_index = request_int("Which item would you like to edit?")
 
     console.print("Item chosen:", end=' ')
@@ -79,6 +83,7 @@ def rename_item() -> None:
     finlist[item_index] = new_name
 
 def move_item() -> None:
+    """Changes the position of an item based on the user input"""
     message: str = "Which item do you want to move?"
     item_index: int = request_int(message)
     message = "Choose the number you want to move it to"
@@ -88,21 +93,25 @@ def move_item() -> None:
     finlist.insert(moving_index, initial_item)
 
 def copy_rankings() -> None:
+    """Copies the rankings to the system clipboard"""
     finstr = as_str()
     copy(finstr)
     console.print("[#00ff00]Copied:[/]", finstr)
 
 def as_str() -> str:
+    """Returns the currently available rankings as a string"""
     finstr = ""
     for index, element in enumerate(finlist):
         finstr += f"{index+1}. {element}\n"
     return finstr
 
 def export_txt() -> None:
+    """Exports the rankings to a text file"""
     finstr = as_str()
     write_to_file("Name of file: ", ".txt", finstr)
 
-def write_to_file(prompt: str, extension: str, data: str):
+def write_to_file(prompt: str, extension: str, data: str) -> None:
+    """Exports the given string to a file, named based on the user input"""
     console.print(prompt, style="#ffff00 bold", end='')
     file_name = input() + extension
     with open(file_name, 'w') as my_file:
