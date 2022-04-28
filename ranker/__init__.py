@@ -3,13 +3,19 @@ from rich.console import Console
 
 console = Console()
 
-def isfloat(value: int) -> bool:
+def is_float(value: int) -> bool:
     """Checks if the given value is a float"""
     try:
       float(value)
       return True
     except ValueError:
       return False
+
+def path_print(path, separator='/'):
+    """
+    Prints the path so that it is intuitively understood which directory is
+    the leaf directory
+    """
 
 class Prompt:
     @staticmethod

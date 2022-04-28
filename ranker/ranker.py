@@ -10,6 +10,9 @@ console = Console()
 
 finlist = []
 
+# TODO: Make 'finlist' a local variable
+# TODO: Use the paths function
+# TODO: Orthogonalize code
 def main():
     """Implements a way to rank any arbitrary item"""
     # Set up a way to let the user leave the program
@@ -57,9 +60,9 @@ def add_item() -> None:
     """Adds an item based on the user input"""
     item_name    = console.input("Name of item: ")
     item_ranking = ""
-    while not(isfloat(item_ranking)):
+    while not(is_float(item_ranking)):
         item_ranking = console.input("Rank: ")
-        if not(isfloat(item_ranking)):
+        if not(is_float(item_ranking)):
             console.print("Please enter a", end=' ')
             console.print("number", style="#ff0000 bold italic")
     item_ranking = floor(float(item_ranking))
