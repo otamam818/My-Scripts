@@ -11,11 +11,17 @@ def is_float(value: int) -> bool:
     except ValueError:
       return False
 
-def path_print(path, separator='/'):
+def path_print(path = str, separator='/') -> None:
     """
     Prints the path so that it is intuitively understood which directory is
     the leaf directory
     """
+    pathlist = path.split(separator)
+    style = Palette.GREY + ' ' + Palette.BOLD
+    for i in pathlist[:-1]:
+        console.print(i + separator, end='', style=style)
+    style = Palette.WHITE + ' ' + Palette.BOLD
+    console.print(pathlist[-1], style=Palette.WHITE)
 
 class Prompt:
     @staticmethod
@@ -35,4 +41,9 @@ class Prompt:
                 console.print("Error", style="#e53935 bold") # red
                 console.print("Not a number.\nPlease enter a [i]number[/]")
         return int(choice)
+
+class Palette:
+    GREY:  str = "#888888"
+    WHITE: str = "white"
+    BOLD:  str = "bold"
 
