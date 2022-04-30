@@ -8,14 +8,10 @@ from pyperclip import copy
 
 console = Console()
 
-finlist = []
-
-# TODO: Make 'finlist' a local variable
-# TODO: Use the paths function
-# TODO: Orthogonalize code
 def main():
     """Implements a way to rank any arbitrary item"""
     # Set up a way to let the user leave the program
+    finlist = []
     try:
         # We don't need to print the table if its empty
         if (len(finlist) != 0):
@@ -39,13 +35,13 @@ def main():
         # Prevent the impossible
         assert(0 < choice <= len(options))
 
-        parse_choices(choice)
+        parse_choices(choice, finlist)
         main()
 
     except KeyboardInterrupt:
         console.print("\nGood bye", style="#ffff00")
 
-def parse_choices(choice):
+def parse_choices(choice: int, finlist: list):
     {
         1 : add_item,
         2 : delete_item,
@@ -54,9 +50,9 @@ def parse_choices(choice):
         5 : copy_rankings,
         6 : export_txt,
         7 : export_csv
-    }[choice]()
+    }[choice](finlist)
 
-def add_item() -> None:
+def add_item(finlist) -> None:
     """Adds an item based on the user input"""
     item_name    = console.input("Name of item: ")
     item_ranking = ""
@@ -68,14 +64,14 @@ def add_item() -> None:
     item_ranking = floor(float(item_ranking))
     finlist.insert(item_ranking, item_name)
 
-def delete_item() -> None:
+def delete_item(finlist) -> None:
     """Deletes an item based on the user input"""
     item_index: str = request_int("Which item would you like to delete?")
     value = finlist[item_index]
     if Confirm.ask(f"Deleting [white bold]{value}[/]. Continue?"):
         finlist.pop(item_index)
 
-def rename_item() -> None:
+def rename_item(finlist) -> None:
     """Renames an item based on the user input"""
     item_index = request_int("Which item would you like to edit?")
 
@@ -85,7 +81,7 @@ def rename_item() -> None:
 
     finlist[item_index] = new_name
 
-def move_item() -> None:
+def move_item(finlist) -> None:
     """Changes the position of an item based on the user input"""
     message: str = "Which item do you want to move?"
     item_index: int = request_int(message)
@@ -95,7 +91,7 @@ def move_item() -> None:
     initial_item = finlist.pop(item_index)
     finlist.insert(moving_index, initial_item)
 
-def copy_rankings() -> None:
+def copy_rankings(finlist) -> None:
     """Copies the rankings to the system clipboard"""
     finstr = as_str()
     copy(finstr)
@@ -108,7 +104,7 @@ def as_str() -> str:
         finstr += f"{index+1}. {element}\n"
     return finstr
 
-def export_txt() -> None:
+def export_txt(finlist) -> None:
     """Exports the rankings to a text file"""
     finstr = as_str()
     write_to_file("Name of file: ", ".txt", finstr)
@@ -121,7 +117,7 @@ def write_to_file(prompt: str, extension: str, data: str) -> None:
         my_file.write(data)
     console.print(f"[#ffff00 bold]Exported to:[/] [white b]{file_name}[/]")
 
-def export_csv() -> None:
+def export_csv(finlist) -> None:
     HEADER = "Item,Rank\n"
 
     data = ""
