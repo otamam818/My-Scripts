@@ -10,47 +10,13 @@ console = Console()
 
 def main():
     """Implements a way to rank any arbitrary item"""
+    ranker = Ranker()
     # Set up a way to let the user leave the program
-    finlist = []
     try:
-        # We don't need to print the table if its empty
-        if (len(finlist) != 0):
-            console.print(get_table())
-            options = [
-                "Add a new item",
-                "Delete a item",
-                "Rename an item",
-                "Move Item",
-                "Copy to clipboard",
-                "Export as .txt file",
-                "Export as .csv file"
-            ]
-        else:
-            options = ["Add a new item"]
-        choice = Prompt.ask_options(
-            question = "What would you like to do?",
-            options = options
-        )
-
-        # Prevent the impossible
-        assert(0 < choice <= len(options))
-
-        parse_choices(choice, finlist)
-        main()
+        ranker.run()
 
     except KeyboardInterrupt:
         console.print("\nGood bye", style="#ffff00")
-
-def parse_choices(choice: int, finlist: list):
-    {
-        1 : add_item,
-        2 : delete_item,
-        3 : rename_item,
-        4 : move_item,
-        5 : copy_rankings,
-        6 : export_txt,
-        7 : export_csv
-    }[choice](finlist)
 
 def add_item(finlist) -> None:
     """Adds an item based on the user input"""
@@ -139,7 +105,7 @@ def request_int(message) -> int:
     
     return int(item_number_input)-1
 
-def get_table() -> Table:
+def get_table(finlist: list) -> Table:
     table = Table(title="Ranker", header_style="#ff8a65 bold")
     for i in ["Item", "Ranking"]:
         table.add_column(i)
@@ -150,6 +116,67 @@ def get_table() -> Table:
         count += 1
 
     return table
+
+class Ranker:
+    __empty: dict = {
+        "Create new list" : None
+    }
+
+    __non_empty : dict = {
+        "Modify List" : [
+            "Add a new item",
+            "Delete a item",
+            "Rename an item",
+            "Move Item"
+        ],
+        "Export" : [
+            "Copy to clipboard",
+            "Export as .txt file",
+            "Export as .csv file"
+        ]
+    }
+
+    def __init__(self):
+        self.__finlist = []
+        self.__path = []
+
+    def run(self):
+        # We don't need to print the table if its empty
+        if (len(self.__finlist) != 0):
+            console.print(get_table(self.__finlist))
+            options = [
+                "Add a new item",
+                "Delete a item",
+                "Rename an item",
+                "Move Item",
+                "Copy to clipboard",
+                "Export as .txt file",
+                "Export as .csv file"
+            ]
+        else:
+            options = ["Add a new item"]
+        choice = Prompt.ask_options(
+            question = "What would you like to do?",
+            options = options
+        )
+
+        # Prevent the impossible
+        assert(0 < choice <= len(options))
+
+        self.__parse_choices(choice)
+        self.run()
+
+    def __parse_choices(self, choice: int):
+        {
+            1 : add_item,
+            2 : delete_item,
+            3 : rename_item,
+            4 : move_item,
+            5 : copy_rankings,
+            6 : export_txt,
+            7 : export_csv
+        }[choice](self.__finlist)
+
 
 if __name__ == "__main__":
     main()
