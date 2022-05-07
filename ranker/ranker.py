@@ -18,80 +18,6 @@ def main():
     except KeyboardInterrupt:
         console.print("\nGood bye", style="#ffff00")
 
-class Ranker:
-    __empty: dict = {
-        "Create new list" : None
-    }
-
-    __non_empty : dict = {
-        "Modify List" : [
-            "Add a new item",
-            "Delete a item",
-            "Rename an item",
-            "Move Item"
-        ],
-        "Export" : [
-            "Copy to clipboard",
-            "Export as .txt file",
-            "Export as .csv file"
-        ]
-    }
-
-    def __init__(self):
-        self.__finlist = []
-        self.__path = []
-
-    def __get_options_list(self, options: dict) -> list:
-        empty_path: bool = self.__path == []
-        if empty_path:
-            return list(options)
-
-        # We do not want to unintentionally modify the options dictionary 
-        try:
-            from copy import copy as cp
-        except ImportError:
-            pass
-
-        # Traverse through the path to get to the final destination within the
-        # dictionary
-        final_options: dict = cp(options)
-        for i in self.__path:
-            final_options = final_options[i]
-        return final_options
-
-    def run(self):
-        """Runs the Ranker class"""
-        # We don't need to print the table if its empty
-        non_empty_ratings: bool = len(self.__finlist) != 0
-        if (non_empty_ratings):
-            console.print(get_table(self.__finlist))
-            options = self.__get_options_list(Ranker.__non_empty)
-        else:
-            options = ["Add a new item"]
-
-        # User input is required to know what the program should do
-        choice = Prompt.ask_options(
-            question = "What would you like to do?",
-            options = options
-        )
-
-        # Prevent the impossible
-        assert(0 < choice <= len(options))
-
-        self.__parse_choices(choice)
-        self.run()
-
-    def __parse_choices(self, choice: int):
-        {
-            1 : add_item,
-            2 : delete_item,
-            3 : rename_item,
-            4 : move_item,
-            5 : copy_rankings,
-            6 : export_txt,
-            7 : export_csv
-        }[choice](self.__finlist)
-
 def add_item(finlist) -> None:
     """Adds an item based on the user input"""
     item_name    = console.input("Name of item: ")
@@ -190,6 +116,94 @@ def get_table(finlist: list) -> Table:
         count += 1
 
     return table
+
+class Ranker:
+    __empty: dict = {
+        "Create new list" : add_item
+    }
+
+    __non_empty : dict = {
+        "Modify List" : {
+            "Add a new item" : add_item,
+            "Delete a item"  : delete_item,
+            "Rename an item" : rename_item,
+            "Move Item"      : move_item
+        },
+        "Export" : {
+            "Copy to clipboard"   : copy_rankings,
+            "Export as .txt file" : export_txt,
+            "Export as .csv file" : export_csv
+        }
+    }
+
+    def __init__(self):
+        # For storing the data of the rankings
+        self.__finlist = []
+
+        # For showing available options
+        self.__root: dict = Ranker.__empty
+        self.__current_options = list(Ranker.__empty)
+        # Works in conjunction with self.__current_options. Used to navigate
+        # through the current options for the user
+        self.__path = []
+
+        # Depending on whether self.__finlist is empty or not, the available
+        # options will be different for the user
+        self.__has_items = False
+
+    def __get_options_list(self, options: dict) -> list:
+        empty_path: bool = self.__path == []
+        if empty_path:
+            return list(options)
+
+        # We do not want to unintentionally modify the options dictionary 
+        try:
+            from copy import copy as cp
+        except ImportError:
+            pass
+
+        # Traverse through the path to get to the final destination within the
+        # dictionary
+        final_options: dict = cp(options)
+        for i in self.__path:
+            final_options = final_options[i]
+        return final_options
+
+    def run(self):
+        """Runs the Ranker class"""
+        # We don't need to print the table if it is the root element
+        self.__has_items = len(self.__finlist) != 0
+        is_nonempty_root = self.__has_items and len(self.__path) == 0
+        if (is_nonempty_root):
+            console.print(get_table(self.__finlist))
+            options = self.__get_options_list(Ranker.__non_empty)
+        else:
+            options = ["Add a new item"]
+
+        # User input is required to know what the program should do
+        choice = Prompt.ask_options(
+            question = "What would you like to do?",
+            options = options
+        )
+
+        # Prevent the impossible
+        assert(0 < choice <= len(options))
+
+        self.__parse_choices(choice)
+        self.run()
+
+    def __parse_choices(self, choice: int):
+        if len(self.__path) == 0:
+            pass
+        {
+            1 : add_item,
+            2 : delete_item,
+            3 : rename_item,
+            4 : move_item,
+            5 : copy_rankings,
+            6 : export_txt,
+            7 : export_csv
+        }[choice](self.__finlist)
 
 if __name__ == "__main__":
     main()
