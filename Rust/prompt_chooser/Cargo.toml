@@ -1,0 +1,6 @@
+[workspace]
+
+members = [
+  "value_chooser",
+  "sin", #Self-info
+]

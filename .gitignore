@@ -1,0 +1,4 @@
+Rust/**/target
+dist/
+Python/**/__pycache__/
+
